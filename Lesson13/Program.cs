@@ -65,15 +65,23 @@ namespace Lesson13
                     xmlser.Serialize(outstream, s);
                     Console.WriteLine($"Successfully serialized squad into xml");
                 }
+                var outopts = new JsonSerializerOptions()
+                {
+                    WriteIndented = true,
+                    Converters = { new JSONAbbreviateConverter() }
+                };
                 using (var outstream = File.CreateText(directory.FullName + @"\abreviated.json"))
                 {
-                    var outopts = new JsonSerializerOptions()
-                    {
-                        WriteIndented = true,
-                        Converters = { new JSONAbbreviateConverter() }
-                    };
                     outstream.Write(JsonSerializer.Serialize(s, outopts));
                     Console.WriteLine($"Successfully serialized squad into abbreviated json");
+                }
+                using (var instreamAbr = File.Open(directory.FullName + @"\abreviated.json", FileMode.Open))
+                {
+                    Squad abrv = JsonSerializer.Deserialize<Squad>(instreamAbr, outopts);
+                    Console.WriteLine($"Successfully deserialized abbreviated json:");
+                    Console.WriteLine(new string('=', 8));
+                    Console.WriteLine(abrv);
+                    Console.WriteLine(new string('=', 8));
                 }
             }
             return true;
